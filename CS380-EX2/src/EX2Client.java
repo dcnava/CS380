@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-
+import java.util.zip.CRC32; 
 
 
 public class EX2Client {
@@ -20,9 +20,23 @@ public class EX2Client {
 		System.out.println("Connected to server.\n" +
 							"Recieved bytes: ");
 		
+		
+
+		//Create the CRC32 which will 
+		CRC32 crc32 = new CRC32();
+		
 		System.out.println("Generated CRC32:" );
+		
+		/*When the server constructs the same CRC32 code then the response 
+		 * is good which is a byte value 1*/
+		int byteResponse = is.read();
+		if(byteResponse == 1)
+			System.out.println("Response good.");
+		else
+			System.out.println("Response bad.");
 
 		System.out.println("Disconnected from server.");
+		
 		
 	}
 
