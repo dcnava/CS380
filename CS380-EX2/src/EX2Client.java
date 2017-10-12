@@ -17,9 +17,19 @@ public class EX2Client {
 		//array which will receive 100 bytes 
 		byte[] bytesReceived = new byte[100];
 		
+		//reading only half of the bytes and then the other half
+		for(int index =0;index <=100; index++ ){
+			int firstByte = is.read();
+			int secondByte = is.read();
+			firstByte = firstByte << 4;
+			bytesReceived[index]= (byte)(firstByte | secondByte); 
+		}
+		
 		System.out.println("Connected to server.\n" +
 							"Recieved bytes: ");
-		
+		for(int index =0;index <=100; index++ ){
+			System.out.println();
+		}
 		
 
 		//Create the CRC32 which will 
