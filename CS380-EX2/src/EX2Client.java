@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.zip.CRC32; 
 
 
@@ -18,7 +19,7 @@ public class EX2Client {
 		byte[] bytesReceived = new byte[100];
 		
 		//reading only half of the bytes and then the other half
-		for(int index =0;index <=100; index++ ){
+		for(int index =0;index <100; index++ ){
 			int firstByte = is.read();
 			int secondByte = is.read();
 			firstByte = firstByte << 4;
@@ -27,15 +28,23 @@ public class EX2Client {
 		
 		System.out.println("Connected to server.\n" +
 							"Recieved bytes: ");
-		for(int index =0;index <=100; index++ ){
-			System.out.println();
+		for(int index =0;index <100; index++ ){
+			System.out.print(String.format("%x",bytesReceived[index]).toUpperCase());
+			if(index%10 == 9)
+				System.out.println();
+			
 		}
 		
 
-		//Create the CRC32 which will 
+		//Create the CRC32 which will detect an error from the data
 		CRC32 crc32 = new CRC32();
+		crc32.update(bytesReceived);
+		int value =(int)crc32.getValue();
+		ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+		buffer.putInt(value);
+		os.write(buffer.array());
 		
-		System.out.println("Generated CRC32:" );
+		System.out.println("\nGenerated CRC32:" + String.format("%x", value).toUpperCase());
 		
 		/*When the server constructs the same CRC32 code then the response 
 		 * is good which is a byte value 1*/
@@ -49,5 +58,4 @@ public class EX2Client {
 		
 		
 	}
-
 }
