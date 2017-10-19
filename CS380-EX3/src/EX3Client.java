@@ -16,14 +16,28 @@ public class EX3Client {
 		//read the incoming bytes from the server
 		int numOfBytes = is.read();
 		
+		System.out.println("Reading "+numOfBytes+ " bytes.");
+		
 		//declaring an array that will store the bytes
-		int[] bytesRecieved = new int[numOfBytes];
+		int[] bytesReceived = new int[numOfBytes];
 		
 		//store the bytes into an array
 		for(int index = 0; index < numOfBytes; index++){
-			bytesRecieved[index] = is.read();
+			bytesReceived[index] = is.read();
+		}
+		for(int index = 0; index < numOfBytes; index++){
+		System.out.print(String.format("%x",bytesReceived[index]).toUpperCase());
+		if(index%10 == 9)
+			System.out.println();
 		}
 		
+		checksum(null);
+		
+		int byteResponse = is.read();
+		if(byteResponse == 1)
+			System.out.println("Response good.");
+		else
+			System.out.println("Response bad.");
 	}
 	//checksum algorithm
 	public static short checksum(byte[] b){
@@ -42,5 +56,6 @@ public class EX3Client {
 		}
 		return (short) ~(sum & 0xFFFF);
 	}
+	
 
 }
