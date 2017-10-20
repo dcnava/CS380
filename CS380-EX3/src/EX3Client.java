@@ -25,29 +25,45 @@ public class EX3Client {
 		for(int index = 0; index < numOfBytes; index++){
 			bytesReceived[index] = is.read();
 		}
+		//Output the bytes being read
 		for(int index = 0; index < numOfBytes; index++){
 		System.out.print(String.format("%x",bytesReceived[index]).toUpperCase());
 		if(index%10 == 9)
 			System.out.println();
 		}
+		System.out.println();
 		
-		checksum(null);
+		short checksum = checksum(bytesReceived);
 		
-		int byteResponse = is.read();
-		if(byteResponse == 1)
+		 System.out.printf( "\nChecksum Calculated: 0x%04X\n", checksum );
+		 
+		 for (int index = 1; index >= 0; index--)
+         {
+            os.write((byte) (checksum >>> (8 * index)));
+         }
+		
+		//response if program worked correctly
+		
+		if(is.read() == 1)
 			System.out.println("Response good.");
 		else
 			System.out.println("Response bad.");
 	}
 	//checksum algorithm
-	public static short checksum(byte[] b){
+	public static short checksum(int[] bytesReceived){
 		long sum = 0;
 		int count = 0;
 		
-		while(count < b.length){
-			
-			short sixteenBitNum=0;
+		while(count < bytesReceived.length){
+			long leftBytes = ((bytesReceived[count++]) & 0xFF) << 8;
+			long rightBytes = 0;
+			if(count < bytesReceived.length){
+				rightBytes = (bytesReceived[count++]) & 0xFF;
+			}
+			long sixteenBitNum= leftBytes + rightBytes;
 			sum += sixteenBitNum;
+			
+			//check if overflow 
 			if((sum & 0xFFFF0000) == 0){
 				//carry occurred. so wrap around
 				sum &= 0xFFFF;
