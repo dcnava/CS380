@@ -100,14 +100,15 @@ public class Ipv4 {
 }
 	
 	//checksum method
-	public static short checksum(short[] packet){
-		int[] header = new int[10];
-		int sum=0;
-		for(int i=0; i<10; i++){
-			int first = ((int)packet[2*i]<<8)&0xFF00;
-			int sec = packet[2*i+1]& 0xFF;
-			header[i]= first + sec;
-			sum +=header[i];
+	public static short checksum(short[] buf){
+		long sum=0;
+		for(int i=0; i<buf.length; i++){
+			sum += (buf[i]&0xFFFF);
+			if((sum & 0xFFFF)>0){
+				/*carry occurred. so wrap around*/
+				sum &= 0xFFFF;
+				sum++;
+			}
 		}
 		sum = ~((sum & 0xFFFF));
 		
